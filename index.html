@@ -1412,7 +1412,7 @@ footer p { margin: 4px 0; }
             if (sync.announce) {
               var added = Object.keys(candidate.days).filter(function (k) { return !(usable && serverContent.days[k]); }).length;
               sync.announce = false;
-              toast(added ? 'Added your ' + plural(added, 'day') + ' to the shared calendar.' : 'Your calendar is now in step with her other device.');
+              toast(added ? 'Added your ' + plural(added, 'day') + ' to the shared calendar.' : 'Your calendar is now up to date with your other devices.');
             }
             sync.offline = false; showSyncIdle();
           });
@@ -1467,7 +1467,7 @@ footer p { margin: 4px 0; }
     var el = $('syncFooter');
     el.textContent = '';
     if (sync.on) {
-      el.appendChild(document.createTextNode('Syncing with her other device is on. '));
+      el.appendChild(document.createTextNode('Syncing with your other devices is on. '));
       el.appendChild(mkBtn('btn link', 'Turn it off here', 'sync-off', turnSyncOff));
     } else {
       el.textContent = 'Saved on this device only.';
@@ -1491,7 +1491,7 @@ footer p { margin: 4px 0; }
       return;
     }
     storeSet(SYNC_KEY, JSON.stringify(cfg));
-    note.className = 'notice welcome'; note.textContent = 'Syncing is on. Her days will now follow her between devices.';
+    note.className = 'notice welcome'; note.textContent = 'Syncing is on. Your days will now show up on all your devices.';
     note.hidden = false;
     startSync();
   }

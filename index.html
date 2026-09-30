@@ -996,9 +996,17 @@ footer p { margin: 4px 0; }
     updateCells();
   }
   $('rangeCancel').addEventListener('click', function () { setPendingRange(null); toast('Range cancelled.'); });
-  cal.addEventListener('click', function (e) {
+  // Listening in the capture phase as well as the bubble phase means a bare
+  // click — from assistive tech, an older browser or automation that sends no
+  // pointer events — still marks the day. Each event is handled exactly once.
+  cal.addEventListener('click', onDayClick, true);
+  cal.addEventListener('click', onDayClick);
+  function onDayClick(e) {
+    if (e.__irelandHandled) return;
+    e.__irelandHandled = true;
     if (suppressClick) { suppressClick = false; return; }
-    var b = e.target.closest && e.target.closest('.day'); if (!b) return;
+    var b = (e.target.closest && e.target.closest('.day')) || (e.target.classList && e.target.classList.contains('day') ? e.target : null);
+    if (!b) return;
     var k = b.getAttribute('data-date');
     state.focusKey = k;
     var pending = state.pendingRange;
@@ -1016,7 +1024,7 @@ footer p { margin: 4px 0; }
     // Arm a range only for what the chosen mode does, so toggling a day off
     // in Confirmed/Planned mode doesn't quietly arm an erase range.
     if (touchLike() && (action !== 'erase' || state.mode === 'erase')) setPendingRange({ anchor: k, action: action });
-  });
+  }
   function tapMessage(k, before, after) {
     var d = shortDate(k, true), past = state.mode === 'planned' && isPast(k) ? ' (past days count as confirmed)' : '';
     if (before === after) return before ? d + ' is already ' + after + '.' : d + ' wasn’t marked.';
